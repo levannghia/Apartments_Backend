@@ -32,6 +32,8 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
 
     Route::prefix('apartment')->name('apartment.')->group(function () {
         Route::get('/', [ApartmentController::class, 'index'])->name('index');
+        Route::get('/create', [ApartmentController::class, 'create'])->name('create');
+        Route::post('/store', [ApartmentController::class, 'store'])->name('store');
     });
 });
 

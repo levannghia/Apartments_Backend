@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\MapController;
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\CountryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,6 +24,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::prefix('location')->group(function () {
     Route::get('/autocomplete', [MapController::class, 'autocomplete']);
     Route::get('/search', [MapController::class, 'search']);
+});
+
+Route::prefix('country')->name('country.')->group(function () {
+    Route::get('/state', [CountryController::class, 'selectState'])->name('state');
+    Route::get('/street', [CountryController::class, 'selectStreet'])->name('street');
 });
 
 Route::prefix('auth')->group(function () {
