@@ -95,23 +95,23 @@ export default function Index(props) {
                                             </thead>
                                             <tbody>
                                                 <tr className="border-b dark:border-neutral-500">
-                                                    <td className="whitespace-nowrap  px-6 py-4 font-medium">1</td>
-                                                    <td className="whitespace-nowrap  px-6 py-4">Mark</td>
-                                                    <td className="whitespace-nowrap  px-6 py-4">Otto</td>
-                                                    <td className="whitespace-nowrap  px-6 py-4">@mdo</td>
+                                                    <td className="whitespace-nowrap px-6 py-4 font-medium">1</td>
+                                                    <td className="whitespace-nowrap px-6 py-4">Mark</td>
+                                                    <td className="whitespace-nowrap px-6 py-4">Otto</td>
+                                                    <td className="whitespace-nowrap px-6 py-4">@mdo</td>
                                                 </tr>
                                                 <tr className="border-b dark:border-neutral-500">
-                                                    <td className="whitespace-nowrap  px-6 py-4 font-medium">2</td>
-                                                    <td className="whitespace-nowrap  px-6 py-4 ">Jacob</td>
-                                                    <td className="whitespace-nowrap  px-6 py-4">Thornton</td>
-                                                    <td className="whitespace-nowrap  px-6 py-4">@fat</td>
+                                                    <td className="whitespace-nowrap px-6 py-4 font-medium">2</td>
+                                                    <td className="whitespace-nowrap px-6 py-4">Jacob</td>
+                                                    <td className="whitespace-nowrap px-6 py-4">Thornton</td>
+                                                    <td className="whitespace-nowrap px-6 py-4">@fat</td>
                                                 </tr>
                                                 <tr className="border-b dark:border-neutral-500">
-                                                    <td className="whitespace-nowrap  px-6 py-4 font-medium">3</td>
-                                                    <td colSpan={2} className="whitespace-nowrap  px-6 py-4">
+                                                    <td className="whitespace-nowrap px-6 py-4 font-medium">3</td>
+                                                    <td colSpan={2} className="whitespace-nowrap px-6 py-4">
                                                         Larry the Bird
                                                     </td>
-                                                    <td className="whitespace-nowrap  px-6 py-4">@twitter</td>
+                                                    <td className="whitespace-nowrap px-6 py-4">@twitter</td>
                                                 </tr>
                                             </tbody>
                                         </table>

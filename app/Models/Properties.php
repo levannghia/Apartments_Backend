@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Galleries;
 
 class Properties extends Model
 {
@@ -26,10 +27,20 @@ class Properties extends Model
         'lng',
         'stars',
         'about',
+        'phone_number',
     ];
 
     public function setNameAttribute($value){
         $this->attributes['name'] = $value;
         $this->attributes['slug'] = Str::slug($value);
+    }
+
+    public function apartments(){
+        return $this->hasMany(Apartments::class, 'property_id');
+    }
+
+    public function galleries()
+    {
+        return $this->morphMany(Galleries::class, 'galleryable');
     }
 }

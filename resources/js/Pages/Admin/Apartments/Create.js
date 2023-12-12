@@ -1,10 +1,10 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import Authenticated from "@/Layouts/Authenticated";
 import { Head, useForm } from "@inertiajs/inertia-react";
 import axios from "axios";
 import { Editor } from '@tinymce/tinymce-react';
 import SelectCountry from "@/Components/SelectCountry";
-import InputForm from "@/Components/inputForm";
+import InputForm from "@/Components/InputForm";
 
 export default function Create(props) {
     const { data, setData, post, processing, errors } = useForm({
@@ -16,7 +16,18 @@ export default function Create(props) {
         city: '',
         state: '',
         street: '',
-    })
+        images: [],
+        apartments: [
+            {
+                bathrooms: null,
+                bedrooms: null,
+                rent: null,
+                sqft: null,
+                unit: ''
+            }
+        ],
+
+    });
     const editorRef = useRef(null);
     const [value, setValue] = useState(null);
     const [activeIndex, setActiveIndex] = useState(0);
@@ -61,14 +72,63 @@ export default function Create(props) {
         });
     }
 
+    const handleInputChange = (index, key, event) => {
+        const values = [...data.apartments];
+        values[index][key] = event.target.value;
+        setData('apartments', values);
+    };
+
+    const addApartment = () => {
+        setData('apartments', [...data.apartments, {
+            bathrooms: null,
+            bedrooms: null,
+            rent: null,
+            sqft: null,
+            unit: ''
+        }]);
+    };
+
+    const removeApartment = (index) => {
+        const updatedApartments = [...data.apartments];
+        updatedApartments.splice(index, 1);
+        setData('apartments', updatedApartments)
+    };
+
+    const onChangeImage = (e) => {
+        const files = e.target.files;
+        // const newAvatars = Array.from(files).map(file => ({
+        //     file,
+        //     preview: URL.createObjectURL(file)
+        // }));
+
+        // setData('images', [data.images, ...newAvatars]);
+
+        const newAvatars = [];
+
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            file.preview = URL.createObjectURL(file);
+            newAvatars.push(file);
+        }
+
+        setData('images', newAvatars);
+    }
+
+    useEffect(() => {
+        return () => {
+            // Xóa các URL tạm thời khi component bị unmount
+            data.images.forEach(image => URL.revokeObjectURL(image.preview));
+        };
+    }, []);
+
     const getBody = () => {
         if (activeIndex === 0) {
             return (
                 <>
                     <div className="md:basis-3/5">
-                        <InputForm error={errors.name} name="Name" value={data.name} required={true} isFocused={true} handleChange={e => setData('name', e.target.value)}/>
-                        <InputForm error={errors.website} autoComplete={true} name="Website" value={data.website} handleChange={e => setData('website', e.target.value)}/>
-                        <InputForm error={errors.phone} autoComplete={true} name="Phone" value={data.phone} handleChange={e => setData('phone', e.target.value)}/>
+                        <InputForm error={errors.name} name="Name" value={data.name} required={true} isFocused={true} handleChange={e => setData('name', e.target.value)} />
+                        <InputForm error={errors.website} autoComplete={'website'} name="Website" value={data.website} handleChange={e => setData('website', e.target.value)} />
+                        <InputForm error={errors.phone} autoComplete={'phone'} name="Phone" value={data.phone} handleChange={e => setData('phone', e.target.value)} />
                         <div className="mb-5">
                             <label
                                 htmlFor="message"
@@ -78,7 +138,7 @@ export default function Create(props) {
                             </label>
                             <Editor
                                 apiKey='66y1xewaxqzfezu1ryf9nq34zgmcbjzazz3cyvamp01t16bl'
-                                // onInit={(evt, editor) => editorRef.current = editor}
+                                onInit={(evt, editor) => editorRef.current = editor}
                                 // initialValue="<p>This is the initial content of the editor.</p>"
                                 onEditorChange={(newValue, editor) => {
                                     setValue(newValue);
@@ -102,10 +162,42 @@ export default function Create(props) {
                         </div>
                     </div>
                     <div className="md:basis-2/5">
-                        <SelectCountry name='city' data={props.city} value={data.city} onChange={handleChangeCity} type={['Thành phố Trung ương', 'Tỉnh']} error={errors.city}/>
-                        <SelectCountry name='state' data={state} value={data.state} onChange={handleChangeState} type={['Thành phố', 'Quận', 'Huyện']} error={errors.state}/>
-                        <SelectCountry name='street' data={street} value={data.street} onChange={(e) => setData('street', e.target.value)} type={['Xã', 'Phường', 'Thị trấn']} error={errors.street}/>
-                        <InputForm autoComplete={true} error={errors.zip} type="number" name="Zip" value={data.zip} handleChange={e => setData('zip', e.target.value)}/>
+                        <SelectCountry name='city' data={props.city} value={data.city} onChange={handleChangeCity} type={['Thành phố Trung ương', 'Tỉnh']} error={errors.city} />
+                        <SelectCountry name='state' data={state} value={data.state} onChange={handleChangeState} type={['Thành phố', 'Quận', 'Huyện']} error={errors.state} />
+                        <SelectCountry name='street' data={street} value={data.street} onChange={(e) => setData('street', e.target.value)} type={['Xã', 'Phường', 'Thị trấn']} error={errors.street} />
+                        <InputForm autoComplete={'zip'} error={errors.zip} type="number" name="Zip" value={data.zip} handleChange={e => setData('zip', e.target.value)} />
+                        <input type="file" multiple onChange={onChangeImage} />
+                        <div className="mt-5 flex-wrap flex space-x-2">
+                            {data.images.map((image, index) => (
+                                <div key={index}>
+                                    <img src={image.preview} width="200px" alt={`Preview ${index}`} />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </>
+            )
+        }
+
+        if (activeIndex == 1) {
+            return (
+                <>
+                    <div className="md:basis-1/2">
+                        {data.apartments.map((apartment, index) => (
+                            <div key={index}>
+                                <InputForm type="number" data={apartment.bathrooms} value={apartment.bathrooms || ''} handleChange={(e) => handleInputChange(index, 'bathrooms', e)} name='Bathrooms' required={true} error={errors['apartments.' + index + '.bathrooms']} />
+                                <InputForm type="number" data={apartment.bedrooms} value={apartment.bedrooms || ''} handleChange={(e) => handleInputChange(index, 'bedrooms', e)} name='Bedrooms' required={true} error={errors['apartments.' + index + '.bedrooms']} />
+                                <InputForm type="number" data={apartment.rent} value={apartment.rent || ''} handleChange={(e) => handleInputChange(index, 'rent', e)} name='Giá thuê' required={true} error={errors['apartments.' + index + '.rent']} />
+                                <InputForm type="number" data={apartment.sqft} value={apartment.sqft || ''} handleChange={(e) => handleInputChange(index, 'sqft', e)} name='Diện tích' required={true} error={errors['apartments.' + index + '.sqft']} />
+                                <InputForm data={apartment.unit} value={apartment.unit || ''} handleChange={(e) => handleInputChange(index, 'unit', e)} name='Dơn vị' required={true} error={errors['apartments.' + index + '.unit']} />
+                                <div className="text-center">
+                                    <button type="button" className="mb-5 text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800" onClick={() => removeApartment(index)}>Remove</button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                    <div className="md:basis-1/2 m-auto text-center">
+                        <button type="button" className="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800" onClick={addApartment}>Add Apartment</button>
                     </div>
                 </>
             )
@@ -144,7 +236,6 @@ export default function Create(props) {
                                             Apartments
                                         </a>
                                     </li>
-
                                     <li className="me-2">
                                         <a
                                             onClick={() => handleChangeActive(2)}

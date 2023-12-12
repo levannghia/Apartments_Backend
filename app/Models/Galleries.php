@@ -9,4 +9,13 @@ class Galleries extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'name',
+        'url',
+    ];
+
+    public function galleryable()
+    {
+        return $this->morphTo();
+    }
 }
