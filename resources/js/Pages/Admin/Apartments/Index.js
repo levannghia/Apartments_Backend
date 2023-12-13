@@ -1,8 +1,25 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Authenticated from '@/Layouts/Authenticated';
 import { Head, Link } from '@inertiajs/inertia-react';
+import { Inertia } from '@inertiajs/inertia';
 
 export default function Index(props) {
+    // console.log(props.properties);
+    const [properties, setProperties] = useState(props.properties);
+    const [search, setSearch] = useState(props.filters.search);
+    const [perPage, setPerPage] = useState(5);
+
+    // const getSearch = () => {
+    //     Inertia.get(
+    //         route('apartment.index'),
+    //         {search: search, perPage: perPage},
+    //     )
+    // }
+
+    // useEffect(() => {
+    //     getSearch();
+    // }, [search]);
+
     return (
         <Authenticated
             auth={props.auth}
@@ -16,15 +33,11 @@ export default function Index(props) {
                         <div className="flex flex-col">
                             <div className='flex flex-row justify-between pt-4 px-4'>
                                 <div className='flex'>
-                                    <select className='mr-2'>
-                                        <option value="1">One</option>
-                                        <option value="2">Two</option>
-                                        <option value="3">Three</option>
-                                        <option value="4">Four</option>
-                                        <option value="5">Five</option>
-                                        <option value="6">Six</option>
-                                        <option value="7">Seven</option>
-                                        <option value="8">Eight</option>
+                                    <select onChange={(e) => setPerPage(e.target.value)} defaultValue={perPage} className='mr-2'>
+                                        <option value="5">5</option>
+                                        <option value="10">10</option>
+                                        <option value="15">15</option>
+                                        <option value="20">20</option>
                                     </select>
                                     <Link href={route('apartment.create')} className="
                                                 inline-flex
@@ -54,13 +67,14 @@ export default function Index(props) {
                                 <div className="max-w-xl">
                                     <div className="relative flex w-full flex-wrap items-stretch">
                                         <input
-                                            type="search"
+                                            type="text"
                                             className="relative m-0 -mr-0.5 block min-w-0 flex-auto rounded-l border border-solid border-neutral-300 bg-transparent bg-clip-padding px-3 py-[0.25rem] text-base font-normal leading-[1.6] text-neutral-700 outline-none transition duration-200 ease-in-out focus:z-[3] focus:border-indigo focus:text-neutral-700 focus:shadow-[inset_0_0_0_1px_rgb(59,113,202)] focus:outline-none dark:border-neutral-600 dark:text-neutral-200 dark:placeholder:text-neutral-200 dark:focus:border-primary"
                                             placeholder="Search"
-                                            aria-label="Search"
-                                            aria-describedby="button-addon1" />
-
+                                            onChange={(e) => setSearch(e.target.value)}
+                                            value={search}
+                                         />
                                         <button
+
                                             className="relative z-[2] flex items-center rounded-r bg-indigo-500 px-6 py-2.5 text-xs font-medium uppercase leading-tight text-white shadow-md transition duration-150 ease-in-out hover:bg-indigo-700 hover:shadow-lg focus:bg-indigo-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-indigo-800 active:shadow-lg"
                                             type="button"
                                             id="button-addon1"
@@ -88,31 +102,20 @@ export default function Index(props) {
                                                 className="border-b bg-neutral-50 font-medium dark:border-neutral-500 dark:text-neutral-800">
                                                 <tr>
                                                     <th scope="col" className=" px-6 py-4">#</th>
-                                                    <th scope="col" className=" px-6 py-4">First</th>
-                                                    <th scope="col" className=" px-6 py-4">Last</th>
-                                                    <th scope="col" className=" px-6 py-4">Handle</th>
+                                                    <th scope="col" className=" px-6 py-4">Name</th>
+                                                    <th scope="col" className=" px-6 py-4">Phone</th>
+                                                    <th scope="col" className=" px-6 py-4">Website</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr className="border-b dark:border-neutral-500">
-                                                    <td className="whitespace-nowrap px-6 py-4 font-medium">1</td>
-                                                    <td className="whitespace-nowrap px-6 py-4">Mark</td>
-                                                    <td className="whitespace-nowrap px-6 py-4">Otto</td>
-                                                    <td className="whitespace-nowrap px-6 py-4">@mdo</td>
-                                                </tr>
-                                                <tr className="border-b dark:border-neutral-500">
-                                                    <td className="whitespace-nowrap px-6 py-4 font-medium">2</td>
-                                                    <td className="whitespace-nowrap px-6 py-4">Jacob</td>
-                                                    <td className="whitespace-nowrap px-6 py-4">Thornton</td>
-                                                    <td className="whitespace-nowrap px-6 py-4">@fat</td>
-                                                </tr>
-                                                <tr className="border-b dark:border-neutral-500">
-                                                    <td className="whitespace-nowrap px-6 py-4 font-medium">3</td>
-                                                    <td colSpan={2} className="whitespace-nowrap px-6 py-4">
-                                                        Larry the Bird
-                                                    </td>
-                                                    <td className="whitespace-nowrap px-6 py-4">@twitter</td>
-                                                </tr>
+                                                {properties?.data.map((property, index) => (
+                                                    <tr className="border-b dark:border-neutral-500" key={index}>
+                                                        <td className="whitespace-nowrap px-6 py-4 font-medium">{index + 1}</td>
+                                                        <td className="whitespace-nowrap px-6 py-4">{property.name}</td>
+                                                        <td className="whitespace-nowrap px-6 py-4">{property.phone_number}</td>
+                                                        <td className="whitespace-nowrap px-6 py-4">{property.website}</td>
+                                                    </tr>
+                                                ))}
                                             </tbody>
                                         </table>
                                     </div>

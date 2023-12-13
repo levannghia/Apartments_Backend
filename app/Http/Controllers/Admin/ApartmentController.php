@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\PropertiesResource;
 use App\Models\Galleries;
 use App\Models\Properties;
 use Illuminate\Http\Request;
@@ -12,9 +13,18 @@ use Illuminate\Support\Facades\Log;
 
 class ApartmentController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return Inertia::render('Admin/Apartments/Index');
+        $perPage = $request->perPage ?: 5;
+        $properties = Properties::when($request->search, function($query, $search){
+            $query->where("name", "like", "%{$search}%");
+        })->paginate($perPage)->withQueryString();
+        // $properties = PropertiesResource::collection($query);
+        // dd($properties);
+        return Inertia::render('Admin/Apartments/Index', [
+            'properties' => $properties,
+            'filters' => $request->only(['search', 'perPage']),
+        ]);
     }
 
     public function create()
@@ -29,7 +39,7 @@ class ApartmentController extends Controller
     {
         $request->validate([
             'name' => 'required|string',
-            'website' => 'url',
+            'website' => 'url|string',
             'phone' => 'numeric|required|digits:10',
             'city' => 'required',
             'state' => 'required',
@@ -40,8 +50,10 @@ class ApartmentController extends Controller
             'apartments.*.rent' => 'required',
             'apartments.*.sqft' => 'required',
             'apartments.*.unit' => 'required',
-            'images' => 'mimes:jpg,bmp,png,jpeg,PNG',
+            'images.*' => 'mimes:jpg,png,jpeg,PNG',
         ]);
+
+        // dd($request->images);
 
         try {
             DB::beginTransaction();
@@ -49,10 +61,10 @@ class ApartmentController extends Controller
                 'name' => $request->input('name'),
                 'website' => $request->input('website'),
                 'phone_number' => $request->input('phone'),
-                'city' => $request->input('city'),
                 'about' => $request->input('about'),
-                'state' => $request->input('state'),
-                'street' => $request->input('street'),
+                'city_id' => $request->input('city'),
+                'state_id' => $request->input('state'),
+                'street_id' => $request->input('street'),
                 'zip' => $request->input('zip'),
             ]);
 
@@ -62,11 +74,13 @@ class ApartmentController extends Controller
                 $files = $request->images;
 
                 foreach ($files as $key => $file) {
-                    $path = $file->store('/files/properties/', 'local');
+                    $path = $file->store('/files/properties', 'local');
 
                     $gallery = new Galleries();
                     $gallery->name = $file->getClientOriginalName();
                     $gallery->url = $path;
+                    $gallery->mime = $file->getMimeType();
+                    $gallery->size = $file->getSize();
 
                     $property->galleries()->save($gallery);
                 }

@@ -19,9 +19,10 @@ class Properties extends Model
         'rent_low',
         'bedroom_low',
         'bedroom_high',
-        'city',
-        'state',
-        'street',
+        'city_id',
+        'state_id',
+        'street_id',
+        'website',
         'zip',
         'lat',
         'lng',
@@ -42,5 +43,17 @@ class Properties extends Model
     public function galleries()
     {
         return $this->morphMany(Galleries::class, 'galleryable');
+    }
+
+    public function city(){
+        return $this->hasOne(City::class, 'matp', 'city_id');
+    }
+
+    public function state(){
+        return $this->hasOne(State::class, 'maqh', 'state_id');
+    }
+
+    public function street(){
+        return $this->hasOne(Street::class, 'xaid', 'street_id');
     }
 }
