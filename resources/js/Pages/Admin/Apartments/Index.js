@@ -2,23 +2,40 @@ import React, { useState, useEffect } from 'react'
 import Authenticated from '@/Layouts/Authenticated';
 import { Head, Link } from '@inertiajs/inertia-react';
 import { Inertia } from '@inertiajs/inertia';
+import Pagination from '@/Components/Pagination';
 
 export default function Index(props) {
-    // console.log(props.properties);
     const [properties, setProperties] = useState(props.properties);
-    const [search, setSearch] = useState(props.filters.search);
-    const [perPage, setPerPage] = useState(5);
+    const [search, setSearch] = useState(props.filters.search || '');
+    const [perPage, setPerPage] = useState(props.filters.perPage || 5);
 
-    // const getSearch = () => {
-    //     Inertia.get(
-    //         route('apartment.index'),
-    //         {search: search, perPage: perPage},
-    //     )
-    // }
+    // console.log(properties);
 
-    // useEffect(() => {
-    //     getSearch();
-    // }, [search]);
+    const handleSearch = () => {
+        Inertia.get(
+            route('apartment.index'),
+            { search: search, perPage: perPage },
+            {
+                // preserveState: true,
+                preserveScroll: true,
+                replace: true,
+            }
+        )
+    }
+
+    const changePerPage = (e) => {
+        const newPerPage = e.target.value
+        setPerPage(newPerPage);
+        Inertia.get(
+            route('apartment.index'),
+            { search: search, perPage: newPerPage },
+            {
+                // preserveState: true,
+                preserveScroll: true,
+                replace: true,
+            }
+        );
+    }
 
     return (
         <Authenticated
@@ -33,11 +50,11 @@ export default function Index(props) {
                         <div className="flex flex-col">
                             <div className='flex flex-row justify-between pt-4 px-4'>
                                 <div className='flex'>
-                                    <select onChange={(e) => setPerPage(e.target.value)} defaultValue={perPage} className='mr-2'>
+                                    <select onChange={(e) => changePerPage(e)} defaultValue={perPage} className='mr-2'>
                                         <option value="5">5</option>
-                                        <option value="10">10</option>
-                                        <option value="15">15</option>
-                                        <option value="20">20</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
                                     </select>
                                     <Link href={route('apartment.create')} className="
                                                 inline-flex
@@ -72,9 +89,9 @@ export default function Index(props) {
                                             placeholder="Search"
                                             onChange={(e) => setSearch(e.target.value)}
                                             value={search}
-                                         />
+                                        />
                                         <button
-
+                                            onClick={() => handleSearch()}
                                             className="relative z-[2] flex items-center rounded-r bg-indigo-500 px-6 py-2.5 text-xs font-medium uppercase leading-tight text-white shadow-md transition duration-150 ease-in-out hover:bg-indigo-700 hover:shadow-lg focus:bg-indigo-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-indigo-800 active:shadow-lg"
                                             type="button"
                                             id="button-addon1"
@@ -121,6 +138,10 @@ export default function Index(props) {
                                     </div>
                                 </div>
                             </div>
+                            {properties.links.length > 3 &&
+                            (<div className='m-2 p-2'>
+                                <Pagination links={properties.links} nextPageUrl={properties.next_page_url} prevPageUrl={properties.prev_page_url}/>
+                            </div>)}
                         </div>
                     </div>
                 </div>

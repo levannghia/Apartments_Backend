@@ -16,7 +16,7 @@ class ApartmentController extends Controller
     public function index(Request $request)
     {
         $perPage = $request->perPage ?: 5;
-        $properties = Properties::when($request->search, function($query, $search){
+        $properties = Properties::select('name', 'id', 'website', 'phone_number')->when($request->search, function($query, $search){
             $query->where("name", "like", "%{$search}%");
         })->paginate($perPage)->withQueryString();
         // $properties = PropertiesResource::collection($query);
