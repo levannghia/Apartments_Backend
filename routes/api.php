@@ -34,5 +34,7 @@ Route::prefix('country')->name('country.')->group(function () {
 Route::prefix('auth')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+    Route::get('/forgot-password/{token}/{email}', [AuthController::class, 'updatePassword'])->name('auth.update.password');
     Route::post('/logout', [AuthController::class, 'logout']);
 });
