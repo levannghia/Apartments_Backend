@@ -158,16 +158,32 @@ class AuthController extends Controller
                 'token' => $token,
                 'email' => $request->email,
             ]);
-
+            $expires = null;
             if ($user) {
                 $resetPassword = DB::table('password_resets')->updateOrInsert(
                     ['email' => $request->input('email')],
                     ['token' => Hash::make($token), 'created_at' => Carbon::now()]
                 );
+                $urlParts = parse_url($url);
+                if ($urlParts && isset($urlParts['path']) && isset($urlParts['query'])) {
+                    parse_str($urlParts['query'], $query);
+                    // Lấy các phần từ URL
+                    // $pathSegments = explode('/', $urlParts['path']);
+                    // Lấy token và email từ phần đường dẫn của URL
+                    // $tokenUrl = $pathSegments[count($pathSegments) - 2];
+                    // $emailUrl = end($pathSegments);
+                    $expires = $query['expires'] ?? null;
+                }
+
 
                 Notification::send($user, new ResetPassword($user, $token, $url));
 
                 return response()->json([
+                    'data' => [
+                        'token' => $token,
+                        'url' => $url,
+                        'expires' => $expires,
+                    ],
                     'message' => 'Success'
                 ], 200);
             }
