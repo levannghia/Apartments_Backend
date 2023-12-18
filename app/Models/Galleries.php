@@ -26,5 +26,4 @@ class Galleries extends Model
 
         return number_format($this->size / pow(1024, $power), 2, '.', ',') . ' ' . $units[$power];
     }
-
 }
