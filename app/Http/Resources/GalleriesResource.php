@@ -15,7 +15,8 @@ class GalleriesResource extends JsonResource
     public function toArray($request)
     {
         return [
-            $this->url,
+            // 'galleryable' => $this->galleryable()->first()->getResource(),
+            'url' => $this->url,
         ];
     }
 }

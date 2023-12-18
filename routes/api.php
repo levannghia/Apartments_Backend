@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\MapController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\CountryController;
+use App\Http\Controllers\Api\V1\PropertiesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,4 +38,8 @@ Route::prefix('auth')->group(function () {
     Route::post('/reset-password', [AuthController::class, 'resetPassword']);
     Route::get('/forgot-password/{token}/{email}', [AuthController::class, 'updatePassword'])->name('auth.update.password');
     Route::post('/logout', [AuthController::class, 'logout']);
+});
+
+Route::prefix('property')->name('property.')->group(function () {
+    Route::get('/', [PropertiesController::class, 'index'])->name('index');
 });

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Resources\PropertiesResource;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -55,5 +56,10 @@ class Properties extends Model
 
     public function street(){
         return $this->hasOne(Street::class, 'xaid', 'street_id');
+    }
+
+    public function getResource()
+    {
+        return new PropertiesResource($this);
     }
 }

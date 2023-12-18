@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Properties;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class PropertiesResource extends JsonResource
