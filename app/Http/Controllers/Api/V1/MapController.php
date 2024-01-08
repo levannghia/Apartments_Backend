@@ -11,7 +11,7 @@ class MapController extends Controller
     public function autocomplete(Request $request){
         $location = $request->get('location');
         $limit = $request->get('limit');
-        $response = Http::get('https://api.locationiq.com/v1/autocomplete',[
+        $response = Http::get('https://api.locationiq.com/v1/autocomplete', [
             'key' => 'pk.4fd6c26c1af13e9af752d7cd4e4d38de',
             'q' => $location,
             'limit' => $limit,
@@ -29,7 +29,7 @@ class MapController extends Controller
             'addressdetails' => 1,
             'normalizeaddress' => 1
         ]);
-        
+
         return $response;
     }
 }

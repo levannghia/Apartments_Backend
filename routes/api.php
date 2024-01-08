@@ -22,6 +22,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::middleware('auth:sanctum')->group(function() {
+    Route::post('/auth/logout', [AuthController::class, 'logout']);
+    Route::prefix('property')->name('property.')->group(function () {
+        Route::get('/', [PropertiesController::class, 'index'])->name('index');
+    });
+});
+
 Route::prefix('location')->group(function () {
     Route::get('/autocomplete', [MapController::class, 'autocomplete']);
     Route::get('/search', [MapController::class, 'search']);
@@ -37,9 +44,4 @@ Route::prefix('auth')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/reset-password', [AuthController::class, 'resetPassword']);
     Route::get('/forgot-password/{token}/{email}', [AuthController::class, 'updatePassword'])->name('auth.update.password');
-    Route::post('/logout', [AuthController::class, 'logout']);
-});
-
-Route::prefix('property')->name('property.')->group(function () {
-    Route::get('/', [PropertiesController::class, 'index'])->name('index');
 });

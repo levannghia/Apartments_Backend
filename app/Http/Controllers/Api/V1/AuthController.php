@@ -266,24 +266,16 @@ class AuthController extends Controller
     }
 
     public function logout(Request $request)
-
     {
-
         try {
-
             $user = User::findOrFail($request->input('user_id'));
-
             $user->tokens()->delete();
-
             return response()->json('User logged out!', 200);
         } catch (\Exception $e) {
             Log::error("message: " . $e->getMessage() . ' ---- line: ' . $e->getLine());
             return response()->json([
-
                 'error' => $e->getMessage(),
-
                 'message' => 'Logout error!'
-
             ]);
         }
     }
