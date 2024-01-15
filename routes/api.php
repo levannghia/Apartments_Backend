@@ -24,6 +24,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::middleware('auth:sanctum')->group(function() {
     Route::post('/auth/logout', [AuthController::class, 'logout']);
+    Route::post('/auth/refresh-token', [AuthController::class, 'refreshToken']);
     Route::prefix('property')->name('property.')->group(function () {
         Route::get('/', [PropertiesController::class, 'index'])->name('index');
     });

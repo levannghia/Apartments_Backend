@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\URL;
+use Laravel\Sanctum\Sanctum;
 use Illuminate\Support\Str;
 
 class AuthController extends Controller
@@ -278,6 +279,20 @@ class AuthController extends Controller
                 'message' => 'Logout error!'
             ]);
         }
+    }
+
+    public function refreshToken(Request $request)
+    {
+        $refreshToken = $request->bearerToken();
+        $user = Sanctum::userFromToken($refreshToken);
+
+        if (!$user) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        $newAccessToken = Sanctum::refreshAccessToken($refreshToken);
+
+        return response()->json(['access_token' => $newAccessToken], 200);
     }
 }
 
