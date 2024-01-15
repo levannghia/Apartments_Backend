@@ -292,7 +292,11 @@ class AuthController extends Controller
 
         $newAccessToken = Sanctum::refreshAccessToken($refreshToken);
 
-        return response()->json(['access_token' => $newAccessToken], 200);
+        return response()->json([
+            'access_token' => $newAccessToken,
+            'token_type' => 'bearer',
+            'expires_in' => auth()->factory()->getTTL() * 60,
+        ], 200);
     }
 }
 
