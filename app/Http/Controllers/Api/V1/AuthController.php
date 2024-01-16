@@ -284,13 +284,19 @@ class AuthController extends Controller
     public function refreshToken(Request $request)
     {
         $refreshToken = $request->bearerToken();
-        $user = Sanctum::userFromToken($refreshToken);
+        $token = DB::table('personal_access_tokens')->where('token', $refreshToken)->first();
 
-        if (!$user) {
+        if (!$token) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
-        $newAccessToken = Sanctum::refreshAccessToken($refreshToken);
+        $user = User::find($token->tokenable_id);
+        $newAccessToken = '';
+        if($user){
+            $user->tokens()->delete();
+            $newAccessToken = $user->createToken('user_token')->plainTextToken;
+            dd("OK");
+        }
 
         return response()->json([
             'access_token' => $newAccessToken,

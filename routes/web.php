@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\ApartmentController;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -23,6 +24,10 @@ Route::get('/', function () {
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
     ]);
+});
+
+Route::get('/artisan-optimize', function() {
+    return Artisan::call('optimize');
 });
 
 Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
